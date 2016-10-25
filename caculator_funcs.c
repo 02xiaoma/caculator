@@ -7,6 +7,37 @@
 
 extern int yylineno; /* from lexer */
 extern FILE * yyin;
+symbol_t *symbol_table = NULL;
+
+symbol_t *find_symbol(const char *name)
+{
+	// 从前往后扫描
+	symbol_t *p_s = symbol_table;
+	while(p_s)
+	{
+		if (strcmp(name, p_s->name)==0)
+		{
+			return p_s;
+		}
+		p_s = p_s->next;
+	}
+	return NULL;
+}
+
+void add_symbol(char *name, double val)
+{
+	// 往头部插入
+	symbol_t *p_s = (symbol_t *)malloc(sizeof(symbol_t));
+	if (!p_s)
+	{
+		yyerror("out of space");
+		exit(0);
+	}
+	p_s->name = name;
+	p_s->val = val;
+	p_s->next = symbol_table;
+	symbol_table = p_s;
+}
 
 void free_ast(const ast_t *p_ast)
 {

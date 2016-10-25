@@ -26,6 +26,16 @@ typedef struct _num
 	double d;
 } num_t;
 
+typedef struct _symbol		//符号，用链表的形式连起来
+{
+	const char *name;
+	double val;
+	struct _symbol *next;
+} symbol_t;
+
+symbol_t *find_symbol(const char *name);	//根据一个名字查找符号，如果不存在则返回NULL
+void add_symbol(char *name, double val);	//对应定义的情况，符号表中加入一项
+extern symbol_t *symbol_table;	//全局变量，符号表
 
 void free_ast(const ast_t *ast);
 double eval(const ast_t *ast);
