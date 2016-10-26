@@ -20,22 +20,8 @@
 
 %%
 caculator: 
- | caculator DEFINE SYMBOL '=' EXP EOL{
-	add_symbol($3, eval($5));
-	free_ast($5);
-	printf("> ");
-  }
- | caculator SYMBOL '=' EXP EOL{
-	symbol_t *p_s = find_symbol($2);
-	if (!p_s)
-	{
-		yyerror("the symbol %s is not found\n", $2);
-		exit(0);
-	}
-	p_s->val = eval($4);
-	free_ast($4);
-	printf("> ");
-  }
+ | caculator DEFINITION_EXP
+ | caculator ASSIGNMENT_EXP
  | caculator EXP EOL {
 	printf("= %4.4g\n", eval($2));
 	free_ast($2); 
@@ -45,6 +31,26 @@ caculator:
 	printf("> ");
   }
  ;
+ 
+DEFINITION_EXP: DEFINE SYMBOL '=' EXP EOL{
+	add_symbol($2, eval($4));
+	free_ast($4);
+	printf("> ");
+  }
+  ;
+
+ASSIGNMENT_EXP: SYMBOL '=' EXP EOL{
+	symbol_t *p_s = find_symbol($1);
+	if (!p_s)
+	{
+		yyerror("the symbol %s is not found\n", $1);
+		exit(0);
+	}
+	p_s->val = eval($3);
+	free_ast($3);
+	printf("> ");
+  }
+  ;
  
 EXP: FACTOR
  | EXP '+' FACTOR {$$ = new_ast('+', $1, $3);}
